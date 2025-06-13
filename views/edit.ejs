@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Task</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-zinc-900 text-white flex items-center justify-center min-h-screen">
+  <form method="POST" action="/edit" class="bg-zinc-800 p-6 rounded shadow-md w-full max-w-md">
+    <input type="hidden" name="oldtitle" value="<%= oldtitle %>">
+    
+    <label class="block mb-2">New Title:</label>
+    <input type="text" name="newtitle" value="<%= oldtitle %>" class="w-full mb-4 p-2 bg-zinc-700 rounded" required>
+    
+    <label class="block mb-2">Details:</label>
+    <textarea name="newdetails" class="w-full h-32 p-2 bg-zinc-700 rounded mb-4" required><%= details %></textarea>
+    
+    <input type="submit" value="Update Task" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded cursor-pointer">
+  </form>
+</body>
+</html>

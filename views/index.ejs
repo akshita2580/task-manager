@@ -11,13 +11,9 @@
   </style>
 </head>
 <body class="bg-zinc-900 text-white min-h-screen px-4 py-10">
-
   <div class="max-w-7xl mx-auto">
 
-    <!-- Header -->
-    <!-- <h1 class="text-4xl font-bold text-center text-blue-400 mb-12">📋 Task Manager</h1> -->
-
-    <!-- Form: Create Task -->
+    <!-- Create Task Form -->
     <div class="bg-zinc-800 px-8 py-6 rounded-xl shadow-md mb-14 mx-auto max-w-md">
       <h2 class="text-2xl font-semibold mb-4 text-white flex justify-center">📋 Task Manager</h2>
       <form method="post" action="/create">
@@ -29,13 +25,12 @@
           required
         />
         <textarea
-  name="details"
-  rows="3"
-  class="w-full bg-zinc-700 text-white px-4 py-2 rounded-md mb-3 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400  leading-snug"
-  placeholder="Details"
-  required
-></textarea>
-
+          name="details"
+          rows="3"
+          class="w-full bg-zinc-700 text-white px-4 py-2 rounded-md mb-3 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400 leading-snug"
+          placeholder="Details"
+          required
+        ></textarea>
         <button
           class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 mb-3 rounded transition-all w-full"
           type="submit"
@@ -52,23 +47,55 @@
       <p class="text-gray-400 text-center">No tasks yet. Add one above!</p>
     <% } else { %>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <% tasks.forEach(task => { %>
-          <div class="bg-zinc-800 p-6 rounded-xl shadow-md hover:shadow-xl transition-all flex flex-col justify-between">
+        <% tasks.forEach((task, index) => { %>
+          <div class="bg-zinc-800 p-6 rounded-xl shadow-md hover:shadow-xl transition-all relative group">
+            <!-- Dropdown Trigger -->
+            <div class="absolute top-4 right-4 z-20">
+              <button onclick="toggleDropdown('<%= task._id %>')" class="text-white hover:text-gray-300 text-lg">
+                ⋮
+              </button>
+              <!-- Dropdown Menu -->
+              <div id="dropdown-<%= task._id %>" class="hidden absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg z-30 text-sm text-black">
+                <a href="/edit/<%= task._id %>" class="block px-4 py-2 hover:bg-gray-100">✏️ Edit</a>
+              </div>
+            </div>
+
+            <!-- Task Content -->
             <div>
-              <h3 class="text-xl font-semibold text-blue-300 mb-2"><%= task.title %></h3>
-              <p class="text-gray-300 mb-4"><%= task.details %></p>
+              <h3 class="text-sm text-gray-400 mb-1">Task <%= index + 1 %></h3>
+              <h4 class="text-xl font-semibold text-blue-300 mb-2"><%= task.title %></h4>
+              <p class="text-gray-300 mb-3"><%= task.details %></p>
             </div>
-            <div class="flex gap-3 mt-auto">
-              <a href="/edit/<%= task._id %>" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-1 rounded">✏️ Edit</a>
-              <form action="/delete/<%= task._id %>" method="POST">
-                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-1 rounded">🗑 Delete</button>
-              </form>
-            </div>
+
+            <!-- Delete Button -->
+            <form action="/delete/<%= task._id %>" method="POST">
+              <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded">
+                🗑 Delete
+              </button>
+            </form>
           </div>
         <% }); %>
       </div>
     <% } %>
   </div>
 
+  <script>
+    function toggleDropdown(id) {
+      const dropdown = document.getElementById('dropdown-' + id);
+      dropdown.classList.toggle('hidden');
+
+      // Close other dropdowns
+      document.querySelectorAll('[id^="dropdown-"]').forEach(el => {
+        if (el.id !== 'dropdown-' + id) el.classList.add('hidden');
+      });
+    }
+
+    // Close dropdown if clicked outside
+    window.addEventListener('click', function(e) {
+      if (!e.target.closest('.group') && !e.target.closest('[id^="dropdown-"]')) {
+        document.querySelectorAll('[id^="dropdown-"]').forEach(el => el.classList.add('hidden'));
+      }
+    });
+  </script>
 </body>
 </html>
